@@ -200,3 +200,13 @@ def get_answers(question_id: int):
     """
 
     return run_query(query, (question_id,))
+
+def get_q():
+    return (run_query("SELECT question_id, question_text, intent FROM questions"))
+
+def get_qid(text:str) -> int:
+    return (run_query(f"SELECT question_id FROM questions WHERE question_text = '{text}'"))[0][0]
+
+def get_aid(q_id:int, u_id:int) -> int:
+    return (run_query(f"SELECT answer_id FROM answers WHERE question_id = '{q_id}' AND user_id = '{u_id}'"))[0][0]
+

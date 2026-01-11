@@ -6,7 +6,7 @@ import base64
 from db_funcs import *
 from settings import *
 
-#model = SentenceTransformer(model_name)
+model = SentenceTransformer(model_name)
 
 def func_timer(base_fn):
     def enhanced_fn():
@@ -64,4 +64,18 @@ def get_mode(modes:list):
 #login_user()
 #print(create_user())
 
+
+def compare_1N(sentence:str, other:list[str]):
+    if not other:
+        return False
+    embedding = model.encode(sentence, convert_to_tensor=True)
+    embeddings = model.encode(other, convert_to_tensor=True)
+    cosine_scores = util.cos_sim(embedding, embeddings)
+    cos_list = cosine_scores.tolist()[0]
+    if cos_list != []:
+        return cos_list
+    return False
+
+
+print(compare_1N("test", ["test", "test"]))
 
