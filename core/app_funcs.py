@@ -52,7 +52,7 @@ def login_user():
 
     return [username, get_uid(username)]
 
-def get_mode(modes:list):
+def get_mode(modes:list) -> str:
     mode = ""
     while 1:
         mode = input(f"Prosim, vyber jeden z modu:  {[mode for mode in modes]}: ")
@@ -72,10 +72,11 @@ def compare_1N(sentence:str, other:list[str]):
     embeddings = model.encode(other, convert_to_tensor=True)
     cosine_scores = util.cos_sim(embedding, embeddings)
     cos_list = cosine_scores.tolist()[0]
-    if cos_list != []:
-        return cos_list
-    return False
+    return cos_list
 
+def show_q_a():
+    question = get_q()[randrange(0,len(get_q()))]
+    answers = get_answers(question[0])
+    return (question, answers)
 
-print(compare_1N("test", ["test", "test"]))
-
+print(show_q_a())

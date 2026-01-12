@@ -1,4 +1,5 @@
 import sqlite3
+from random import randrange
 
 connector = sqlite3.connect("db.db")
 cursor = connector.cursor()
@@ -107,21 +108,6 @@ def get_uid(username:str) -> int:
         WHERE username = '{username}'
         """)[0][0]
 
-def random_entry(table:str=""):
-    tables = [t for (t,) in list(run_query("SELECT name FROM sqlite_master WHERE type='table';"))]
-    if table not in tables:
-        raise ValueError("Invalid table name")
-
-    return run_query(f"""    
-        SELECT *
-        FROM {table}
-        WHERE question_id >= (
-            SELECT FLOOR(RANDOM() * (MAX(question_id) - MIN(question_id) + 1)) + MIN(question_id)
-            FROM {table}
-        )
-        ORDER BY question_id
-        LIMIT 1;
-    """)
 
 #def get_q_a(question_id):
 
@@ -201,7 +187,7 @@ def get_answers(question_id: int):
 
     return run_query(query, (question_id,))
 
-def get_q():
+def get_q() -> list:
     return (run_query("SELECT question_id, question_text, intent FROM questions"))
 
 def get_qid(text:str) -> int:
@@ -209,4 +195,7 @@ def get_qid(text:str) -> int:
 
 def get_aid(q_id:int, u_id:int) -> int:
     return (run_query(f"SELECT answer_id FROM answers WHERE question_id = '{q_id}' AND user_id = '{u_id}'"))[0][0]
+
+def random_question():
+    return get_q()[randrange(0,len(get_q()))]
 

@@ -15,28 +15,27 @@ def introduction():
 introduction()
 print(f"Ahoj {user[0]}, ja jsem deda vseveda.")
 
-mode = get_mode(modes)
-
-print(f"Vybral jsi: {mode}\n")
-
-if mode != "":
-    running = True
-
-
+running = True
 while running:
+    mode = get_mode(modes)
+    print(f"Vybral jsi: {mode}\n")
+
     while mode == "test":
-        q = random_entry("questions") # question tuple
-        if q==[]:
-            continue
-        a = input(str(q[0][1]) + ": ") # answer
+        q = random_question() # question tuple
+        a = input(str(q[1]) + ": ") # answer
         if a == 'q':
-            running = False
-        answers = get_answers(q[0][0])
+            break
+        
+        answers = get_answers(q[0])
         answers_text = [answer[1] for answer in answers]
-        if compare_1N(a, answers_text):
+        hits = [item for item in compare_1N(a, answers_text) if item>0.8]  # type: ignore
+        if hits != []:
             print("Great! You got it!")
         else:
-            print(f"That is not right.. The two best answers were: '{answers_text[0]}' and '{answers_text[1]}'")
+            if len(answers)>1:
+                print(f"The two best answers I can think of are: '{answers[0][1]}' and '{answers[1][1]}'")
+                continue
+            print(f"Best answer I can think if is: {answers[0][1]}")
     while mode == "ask":
         q = input("What is your question?: ")
         q_intent = [word.lower() for word in q.split(" ") if word.lower() in ('when', 'how', 'why', 'what', 'should', 'where', 'who')]
@@ -62,3 +61,6 @@ while running:
         answer_notes = input("Wanna add some additional informations to that?")
         if len(answer_notes)>10:
             insert_a_note(get_aid(get_qid(q), user[1]), answer_notes)
+    while mode == "vote":
+        pass
+    
