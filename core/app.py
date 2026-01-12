@@ -38,6 +38,8 @@ while running:
             print(f"Best answer I can think if is: {answers[0][1]}")
     while mode == "ask":
         q = input("What is your question?: ")
+        if q == 'q':
+            break
         q_intent = [word.lower() for word in q.split(" ") if word.lower() in ('when', 'how', 'why', 'what', 'should', 'where', 'who')]
         if q_intent != []:
             same_intent_questions = [question for question in get_q() if question[2]==q_intent[0]]
@@ -62,5 +64,7 @@ while running:
         if len(answer_notes)>10:
             insert_a_note(get_aid(get_qid(q), user[1]), answer_notes)
     while mode == "vote":
-        pass
+        if vote_q_a(user[1], show_q_a()) == None:
+            break
+
     

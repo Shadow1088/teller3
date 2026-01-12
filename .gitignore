@@ -2,3 +2,4 @@
 .vscode
 db.db
 .gitattributes
+__pycache__

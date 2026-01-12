@@ -48,7 +48,6 @@ CREATE TABLE answer_votes (
     answer_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     vote_type TEXT NOT NULL CHECK (vote_type IN ('upvote', 'downvote')),
-    weight REAL NOT NULL DEFAULT 1.0,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (answer_id) REFERENCES answers(answer_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
@@ -76,22 +75,9 @@ CREATE TABLE answer_notes (
     note_id INTEGER PRIMARY KEY AUTOINCREMENT,
     answer_id INTEGER NOT NULL,
     note_text TEXT NOT NULL,
-    created_by INTEGER,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (answer_id) REFERENCES answers(answer_id) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 CREATE INDEX idx_answer_notes_answer_id ON answer_notes(answer_id);
-
--- View for vote aggregation
-CREATE VIEW answer_vote_summary AS
-SELECT 
-    answer_id,
-    SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE 0 END) as upvote_count,
-    SUM(CASE WHEN vote_type = 'downvote' THEN 1 ELSE 0 END) as downvote_count,
-    SUM(CASE WHEN vote_type = 'upvote' THEN weight ELSE 0 END) as upvote_weight,
-    SUM(CASE WHEN vote_type = 'downvote' THEN weight ELSE 0 END) as downvote_weight,
-    COUNT(*) as total_votes
-FROM answer_votes
-GROUP BY answer_id;
